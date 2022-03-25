@@ -5,7 +5,7 @@ from pollution_analysis.utils.utils import read_csv, write_csv
 
 
 class FlaringDescriptor:
-    def __init__(self, processed_target_df: pd.DataFrame, described_flaring_dir: str, time_aggregation):
+    def __init__(self, processed_target_df: pd.DataFrame, described_flaring_dir: str, time_aggregation: str):
         self.processed_target_df = processed_target_df
         self.described_flaring_dir = described_flaring_dir
         self.time_aggregation = time_aggregation
@@ -24,7 +24,7 @@ class FlaringDescriptor:
         )
 
     def calculate_total_flares_per_month(self, flaring_by_date_df):
-        if self.time_aggregation == "month":
+        if self.time_aggregation == "date":
             flaring_by_date_df["Flaring_time_str"] = pd.to_datetime(
                 flaring_by_date_df["Date_LTZ"]
             ).dt.to_period("D")
@@ -78,4 +78,4 @@ if __name__ == "__main__":
         "iraq_processed_data/unique_flaring_locations_timeseries.csv"
     )
     described_flaring_dir = "summarised_data/flare_processed_data"
-    FlaringDescriptor(flaring_location_in_time_df, described_flaring_dir).execute()
+    FlaringDescriptor(flaring_location_in_time_df, described_flaring_dir, "month").execute()
