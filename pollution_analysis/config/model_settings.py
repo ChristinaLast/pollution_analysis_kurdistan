@@ -17,20 +17,22 @@ class FlaringScraperConfig:
 
 @dataclass
 class FlaringLoaderConfig:
-    TARGET_DIR = "local_data"
-    START_DATE = "20200101"
+    TARGET_DIR = "raw_data"
+    START_DATE = "20190701"
     END_DATE = "20220101"
     COUNTRY_SHP = "geo_data/irq_admbnda_adm1_cso_20190603.shp"
 
 
 @dataclass
 class FlaringDescriptorConfig:
-    PROCESSED_TARGET_DIR = "iraq_processed_data/local_data"
+    # PROCESSED_TARGET_DIR = "iraq_processed_data/local_data"
+    PROCESSED_TARGET_DIR = "iraq_processed_data/unique_flaring_locations_timeseries.csv"
+    DESCRIBED_FLARING_DIR = "summarised_data/flare_processed_data"
 
 
 @dataclass
 class FlaringGrouperConfig:
-    PROCESSED_TARGET_DIR: str = "iraq_processed_data/local_data"
+    PROCESSED_TARGET_DIR: str = "processed_data/all_data/raw_data"
     FLARING_COLUMNS_TO_KEEP: Sequence[str] = field(
         default_factory=lambda: [
             "id",
@@ -42,10 +44,13 @@ class FlaringGrouperConfig:
             "Cloud_Mask",
         ]
     )
+    NO_OF_DP = 2
+    # leave empty if no timeseries (only unique locations)
+    TIMESERIES_COL = "Date_LTZ"
 
 
 @dataclass
-class MethaneLoaderConfig:
+class SatelliteLoaderConfig:
     COUNTRY_CODES = ["IQ"]
     CRS: str = "epsg:4326"
     YEAR: int = 2019
@@ -55,9 +60,14 @@ class MethaneLoaderConfig:
     MON_END: int = 3
     DATE_END: int = 11
     PLACE = "Iraqi Kurdistan, Iraq"
-    BASE_FOLDER = "/ee_data"
-    METHANE_IMAGE_COLLECTION = "COPERNICUS/S5P/OFFL/L3_CH4"
-    METHANE_IMAGE_BAND = [
-        "CH4_column_volume_mixing_ratio_dry_air",
+    BASE_FOLDER = "image_data"
+    IMAGE_COLLECTION = "LANDSAT/LC09/C02/T1_L2"
+    IMAGE_BAND = [
+        "SR_B1",
+        "SR_B2",
+        "SR_B3",
     ]
-    MODEL_NAME = "CH4"
+    IMAGE_FOLDER = "image_data"
+    MODEL_NAME = "LANDSAT"
+    LAT_COL = "Lat_GMTCO"
+    LON_COL = "Lon_GMTCO"
