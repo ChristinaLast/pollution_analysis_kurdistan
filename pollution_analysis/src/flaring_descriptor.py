@@ -10,8 +10,9 @@ from utils.utils import read_csv, write_csv
 
 
 class FlaringDescriptor:
-    def __init__(self, processed_target_dir: str):
+    def __init__(self, processed_target_dir: str, described_flaring_dir: str):
         self.processed_target_dir = processed_target_dir
+        self.described_flaring_dir = described_flaring_dir
 
     @classmethod
     def from_dataclass_config(
@@ -20,6 +21,7 @@ class FlaringDescriptor:
 
         return cls(
             processed_target_dir=descriptior_config.PROCESSED_TARGET_DIR,
+            described_flaring_dir=descriptior_config.DESCRIBED_FLARING_DIR
         )
 
     def execute(
@@ -40,7 +42,7 @@ class FlaringDescriptor:
 
         write_csv(
             monthly_flaring_df,
-            "summarised_data/iraq_processed_data/annual_flaring_count.csv",
+            f"{self.described_flaring_dir}/annual_flaring_count.csv",
         )
 
     def execute_for_year(self, dirname, containing_folder, fileList):
@@ -58,13 +60,13 @@ class FlaringDescriptor:
 
         try:
             monthly_flaring_df = pd.concat(df_list)
-            Path(f"summarised_data/{self._get_year_from_files(filepath)}").mkdir(
+            Path(f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}").mkdir(
                 parents=True, exist_ok=True
             )
 
             write_csv(
                 monthly_flaring_df,
-                f"summarised_data/iraq_processed_data/{self._get_year_month_from_files(filepath)}_total_flaring_count.csv",
+                f"{self.described_flaring_dir}/{self._get_year_month_from_files(filepath)}_total_flaring_count.csv",
             )
             return monthly_flaring_df
         except ValueError:
