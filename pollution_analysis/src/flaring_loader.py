@@ -44,9 +44,12 @@ class FlaringLoader:
         )
 
     def execute_for_year(self, kurdistan_gdf, dirname, containing_folder, fileList):
-        non_flaring_filetypes = [".DS_Store",]
+        non_flaring_filetypes = [
+            ".DS_Store",
+        ]
         flaring_filepaths = [
-            os.path.join(dirname, filename) for filename in fileList
+            os.path.join(dirname, filename)
+            for filename in fileList
             if not any(filetype in filename for filetype in non_flaring_filetypes)
         ]
 
@@ -58,8 +61,10 @@ class FlaringLoader:
             country_flaring_gdf = self._select_flares_within_country(
                 flaring_gdf, kurdistan_dissolved_gdf
             )
-            Path(f"iraq_processed_data/{dirname}").mkdir(parents=True, exist_ok=True)
-            country_flaring_gdf.to_csv(f"iraq_processed_data/{dirname}/{self._get_dates_from_files(filepath)}.csv")
+            Path(f"processed_data/all_data/{dirname}").mkdir(parents=True, exist_ok=True)
+            flaring_gdf.to_csv(
+                f"processed_data/all_data/{dirname}/{self._get_dates_from_files(filepath)}.csv"
+            )
 
     def _unzip_to_df(self, filepath):
         return read_csv(filepath, error_bad_lines=False)
@@ -67,25 +72,27 @@ class FlaringLoader:
     def _extract_kurdistan_shp(self):
         iraq_gdf = gpd.read_file(self.country_shp)
         iraq_gdf.set_crs(epsg=4326, inplace=True)
-        return iraq_gdf.loc[iraq_gdf['ADM1_EN'].isin(["Erbil", "Kirkuk", "Al-Sulaymaniyah"]) == False]
-
+        return iraq_gdf.loc[
+            iraq_gdf["ADM1_EN"].isin(["Erbil", "Kirkuk", "Al-Sulaymaniyah"]) == False
+        ]
 
     def _df_to_gdf(self, flaring_df):
-        return gpd.GeoDataFrame(flaring_df, crs=4326, geometry=gpd.points_from_xy(flaring_df.Lon_GMTCO, flaring_df.Lat_GMTCO))
+        return gpd.GeoDataFrame(
+            flaring_df,
+            crs=4326,
+            geometry=gpd.points_from_xy(flaring_df.Lon_GMTCO, flaring_df.Lat_GMTCO),
+        )
 
     def _get_xy(self, flaring_df):
-        flaring_df["x"] = building_footprint_gdf.centroid_geometry.map(lambda p: p.x)
+        flaring_df["x"] = flaring_df.centroid_geometry.map(lambda p: p.x)
         flaring_df["y"] = flaring_df.centroid_geometry.map(lambda p: p.y)
         return flaring_df
 
     def _select_flares_within_country(self, flaring_gdf, iraq_gdf):
         assert flaring_gdf.crs == iraq_gdf.crs
 
-        return gpd.sjoin(flaring_gdf, iraq_gdf, op='within', how='inner')
+        return gpd.sjoin(flaring_gdf, iraq_gdf, op="within", how="inner")
 
-
-    def _get_dates_from_files(
-        self, filepath
-    ):
+    def _get_dates_from_files(self, filepath):
         """Filter filenames based on IDs and publication dates"""
         return str(re.search("([0-9]{4}[0-9]{2}[0-9]{2})", filepath).group(0))
