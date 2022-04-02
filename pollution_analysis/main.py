@@ -1,20 +1,19 @@
 import click
+from joblib import Parallel, delayed
+import ee
 
-from config.model_settings import FlaringScraperConfig, FlaringLoaderConfig, FlaringDescriptorConfig
-from src.flaring_scraper import FlaringScraper
+from config.model_settings import (
+    FlaringScraperConfig,
+    FlaringLoaderConfig,
+    FlaringDescriptorConfig,
+    FlaringGrouperConfig,
+    SatelliteLoaderConfig,
+)
 from src.flaring_descriptor import FlaringDescriptor
 from src.flaring_loader import FlaringLoader
-
-
-class FlaringScraperFlow:
-    def __init__(self, scraper_config):
-        self.scraper_config = FlaringScraperConfig()
-
-    def execute(self):
-        # Trigger the authentication flow.
-        flaring_scraper = FlaringScraper.from_dataclass_config(self.scraper_config)
-
-        flaring_scraper.execute()
+from src.flaring_grouper import FlaringGrouper
+from src.satellite_loader import SatelliteLoader
+from utils.utils import read_csv
 
 
 class FlaringLoaderFlow:
@@ -34,18 +33,88 @@ class FlaringDescriptorFlow:
 
     def execute(self):
         # Trigger the authentication flow.
-        flaring_descriptor = FlaringDescriptor.from_dataclass_config(self.flaring_descriptor_config)
+        flaring_descriptor = FlaringDescriptor.from_dataclass_config(
+            self.flaring_descriptor_config
+        )
 
         flaring_descriptor.execute()
+
+
+class FlaringSatelliteFetcherFlow:
+    def __init__(self, processed_file):
+        self.flaring_grouper_config = FlaringGrouperConfig()
+        self.satellite_loader_config = SatelliteLoaderConfig()
+        self.processed_file = processed_file
+
+    def execute(self):
+        # Trigger the authentication flow.
+        flaring_grouper = FlaringGrouper.from_dataclass_config(
+            self.flaring_grouper_config,
+        )
+
+        flaring_grouper.execute(self.processed_methane_file)
+
+        satellite_loader = SatelliteLoader.from_dataclass_config(
+            self.satellite_loader_config,
+        )
+        ee.Authenticate()
+        df = read_csv(self.processed_file)
+
+        satellite_loader.execute(df)
+        # df_iterator = read_csv(
+        #     self.processed_file,
+        #     chunksize=100,
+        #     on_bad_lines='skip'
+        # )
+        #
+        # Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
+        #     delayed(satellite_loader.execute)(i, chunk)
+        #     for i, chunk in enumerate(df_iterator)
+        # )
+
+
+class FlaringGrouperFlow:
+    def __init__(self, processed_flaring_file):
+        self.flaring_grouper_config = FlaringGrouperConfig()
+        self.processed_flaring_file = processed_flaring_file
+
+    def execute(self):
+        flaring_grouper = FlaringGrouper.from_dataclass_config(
+            self.flaring_grouper_config,
+        )
+
+        flaring_grouper.execute(self.processed_flaring_file)
 
 
 @click.command("flaring_loader", help="Load flaring data from local folder")
 def load_flaring_data():
     FlaringLoaderFlow().execute()
 
-@click.command("flaring_descriptor", help="Describe temporal changes in flaring in a coutry's preprocessed data")
+
+@click.command(
+    "flaring_descriptor",
+    help="Describe temporal changes in flaring in a coutry's preprocessed data",
+)
 def describe_flaring_data():
     FlaringDescriptorFlow().execute()
+
+
+@click.command(
+    "group_flaring_data",
+    help="Group flaring locations for further analysis",
+)
+@click.argument("processed_flaring_file")
+def group_flaring_data(processed_flaring_file):
+    FlaringGrouperFlow(processed_flaring_file).execute()
+
+
+@click.command(
+    "load_satellite_data",
+    help="Get the unique flaring locations at a 1km granularity, and download all satellite data given a time period",
+)
+@click.argument("processed_file")
+def load_satellite_data(processed_file):
+    FlaringSatelliteFetcherFlow(processed_file).execute()
 
 
 @click.group(
@@ -59,6 +128,8 @@ def cli(ctx):
 
 cli.add_command(load_flaring_data)
 cli.add_command(describe_flaring_data)
+cli.add_command(group_flaring_data)
+cli.add_command(load_satellite_data)
 
 if __name__ == "__main__":
     cli()
