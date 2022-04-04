@@ -75,7 +75,7 @@ class FlaringDescriptor:
 
 if __name__ == "__main__":
     flaring_location_in_time_df = read_csv(
-        "iraq_processed_data/unique_flaring_locations_timeseries.csv"
+        "processed_data/all_data/unique_flaring_locations_timeseries.csv"
     )
-    described_flaring_dir = "summarised_data/flare_processed_data"
-    FlaringDescriptor(flaring_location_in_time_df, described_flaring_dir, "month").execute()
+    described_flaring_dir = "summarised_data/all_processed_data"
+    FlaringDescriptor(flaring_location_in_time_df, described_flaring_dir, "date").execute()
