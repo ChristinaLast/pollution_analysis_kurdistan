@@ -48,11 +48,11 @@ class FlaringSatelliteFetcherFlow:
 
     def execute(self):
         # Trigger the authentication flow.
-        flaring_grouper = FlaringGrouper.from_dataclass_config(
-            self.flaring_grouper_config,
-        )
-
-        flaring_grouper.execute(self.processed_methane_file)
+        # flaring_grouper = FlaringGrouper.from_dataclass_config(
+        #     self.flaring_grouper_config,
+        # )
+        #
+        # flaring_grouper.execute(self.processed_methane_file)
 
         satellite_loader = SatelliteLoader.from_dataclass_config(
             self.satellite_loader_config,
@@ -115,7 +115,6 @@ def group_flaring_data(processed_flaring_file):
 @click.argument("processed_file")
 def load_satellite_data(processed_file):
     FlaringSatelliteFetcherFlow(processed_file).execute()
-
 
 @click.group(
     "flaring-pollution-analyisis",
