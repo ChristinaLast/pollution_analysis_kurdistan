@@ -85,12 +85,12 @@ class SatelliteLoader:
             self.image_folder,
             self.model_name,
             self.place,
-        ).execute_for_country(flaring_geometries, save_images=True)
+        ).execute_for_country(flaring_geometries, save_images=False)
 
-        # satellite_df.to_csv(
-        #     f"{self.folder}/{self.model_name}_concentrations.csv",
-        #     index=False,  # Skip index column
-        # )
+        satellite_df.to_csv(
+            f"{self.folder}/{self.model_name}_concentrations.csv",
+            index=False,  # Skip index column
+        )
         return satellite_df
 
     def get_point_geometry_from_lat_lon(self, row):
