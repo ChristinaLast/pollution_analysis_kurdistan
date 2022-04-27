@@ -4,7 +4,7 @@ import pandas as pd
 from pollution_analysis.utils.utils import read_csv, write_csv
 
 
-class FlaringDescriptor:
+class FlaringAggregator:
     def __init__(self, processed_target_df: pd.DataFrame, described_flaring_dir: str, time_aggregation: str):
         self.processed_target_df = processed_target_df
         self.described_flaring_dir = described_flaring_dir
@@ -63,7 +63,6 @@ class FlaringDescriptor:
         return str(row.year)
 
     def _replace_symbol(row, item):
-        # print(str(item).replace(".", "_"))
         return str(item).replace(".", "_")
 
     def _get_dately_timestamp(self, row):
@@ -77,5 +76,5 @@ if __name__ == "__main__":
     flaring_location_in_time_df = read_csv(
         "processed_data/all_data/unique_flaring_locations_timeseries.csv"
     )
-    described_flaring_dir = "summarised_data/all_processed_data"
-    FlaringDescriptor(flaring_location_in_time_df, described_flaring_dir, "date").execute()
+    described_flaring_dir = "processed_data/all_data"
+    FlaringAggregator(flaring_location_in_time_df, described_flaring_dir, "month").execute()
