@@ -1,8 +1,7 @@
 import os
 from pydantic.dataclasses import dataclass
 from dataclasses import field
-from typing import Dict, Tuple, Sequence
-from pydantic import StrictStr
+from typing import Sequence
 
 
 @dataclass
@@ -18,9 +17,9 @@ class FlaringScraperConfig:
 @dataclass
 class FlaringLoaderConfig:
     TARGET_DIR = "raw_data"
-    START_DATE = "20190701"
-    END_DATE = "20220101"
-    COUNTRY_SHP = "geo_data/irq_admbnda_adm1_cso_20190603.shp"
+    START_DATE = "20181012"
+    END_DATE = "202204022"
+    COUNTRY_SHP = "geo_data/kurdistan_adm_2.geojson"
 
 
 @dataclass
@@ -57,17 +56,16 @@ class SatelliteLoaderConfig:
     MON_START: int = 7
     DATE_START: int = 13
     YEAR_END: int = 2022
-    MON_END: int = 3
-    DATE_END: int = 11
+    MON_END: int = 4
+    DATE_END: int = 8
     PLACE = "Iraqi Kurdistan, Iraq"
-    BASE_FOLDER = "image_data"
-    IMAGE_COLLECTION = "LANDSAT/LC09/C02/T1_L2"
+    BASE_FOLDER = "aod_data"
+    IMAGE_COLLECTION = "MODIS/006/MCD19A2_GRANULES"
     IMAGE_BAND = [
-        "SR_B1",
-        "SR_B2",
-        "SR_B3",
+        "Optical_Depth_047",
+        "Optical_Depth_055",
     ]
-    IMAGE_FOLDER = "image_data"
-    MODEL_NAME = "LANDSAT"
-    LAT_COL = "Lat_GMTCO"
-    LON_COL = "Lon_GMTCO"
+    IMAGE_FOLDER = "aod_data"
+    MODEL_NAME = "AOD"
+    LAT_COL = "y"
+    LON_COL = "x"
