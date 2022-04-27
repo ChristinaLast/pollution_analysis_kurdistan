@@ -1,8 +1,7 @@
 import os
 from pydantic.dataclasses import dataclass
 from dataclasses import field
-from typing import Dict, Tuple, Sequence
-from pydantic import StrictStr
+from typing import Sequence
 
 
 @dataclass
@@ -18,9 +17,9 @@ class FlaringScraperConfig:
 @dataclass
 class FlaringLoaderConfig:
     TARGET_DIR = "raw_data"
-    START_DATE = "20190701"
-    END_DATE = "20220101"
-    COUNTRY_SHP = "geo_data/irq_admbnda_adm1_cso_20190603.shp"
+    START_DATE = "20181012"
+    END_DATE = "202204022"
+    COUNTRY_SHP = "geo_data/kurdistan_adm_2.geojson"
 
 
 @dataclass

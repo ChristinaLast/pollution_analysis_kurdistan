@@ -3,9 +3,7 @@ import re
 from pathlib import Path
 
 import geopandas as gpd
-from shapely.geometry import Point
 from joblib import Parallel, delayed
-from datetime import datetime
 
 from config.model_settings import FlaringLoaderConfig
 from utils.utils import read_csv
@@ -35,7 +33,7 @@ class FlaringLoader:
     def execute(
         self,
     ):
-        country_gdf = self._extract_kurdistan_shp()
+        country_gdf = self._read_gdf()
         Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
             delayed(self.execute_for_year)(
                 country_gdf, dirname, containing_folder, fileList
@@ -54,27 +52,25 @@ class FlaringLoader:
         ]
 
         for filepath in flaring_filepaths:
-            kurdistan_dissolved_gdf = kurdistan_gdf.dissolve()
+            dissolved_gdf = kurdistan_gdf.dissolve()
 
             flaring_df = self._unzip_to_df(filepath)
             flaring_gdf = self._df_to_gdf(flaring_df)
             country_flaring_gdf = self._select_flares_within_country(
-                flaring_gdf, kurdistan_dissolved_gdf
+                flaring_gdf, dissolved_gdf
             )
             Path(f"processed_data/all_data/{dirname}").mkdir(parents=True, exist_ok=True)
-            flaring_gdf.to_csv(
+            country_flaring_gdf.to_csv(
                 f"processed_data/all_data/{dirname}/{self._get_dates_from_files(filepath)}.csv"
             )
 
     def _unzip_to_df(self, filepath):
         return read_csv(filepath, error_bad_lines=False)
 
-    def _extract_kurdistan_shp(self):
-        iraq_gdf = gpd.read_file(self.country_shp)
-        iraq_gdf.set_crs(epsg=4326, inplace=True)
-        return iraq_gdf.loc[
-            iraq_gdf["ADM1_EN"].isin(["Erbil", "Kirkuk", "Al-Sulaymaniyah"]) == False
-        ]
+    def _read_gdf(self):
+        gdf = gpd.read_file(self.country_shp)
+        gdf.set_crs(epsg=4326, inplace=True)
+        return gdf
 
     def _df_to_gdf(self, flaring_df):
         return gpd.GeoDataFrame(
