@@ -47,30 +47,21 @@ class FlaringSatelliteFetcherFlow:
         self.processed_file = processed_file
 
     def execute(self):
-        # Trigger the authentication flow.
-        # flaring_grouper = FlaringGrouper.from_dataclass_config(
-        #     self.flaring_grouper_config,
-        # )
-        #
-        # flaring_grouper.execute(self.processed_methane_file)
-
         satellite_loader = SatelliteLoader.from_dataclass_config(
             self.satellite_loader_config,
         )
         ee.Authenticate()
-        df = read_csv(self.processed_file)
 
-        satellite_loader.execute(df)
-        # df_iterator = read_csv(
-        #     self.processed_file,
-        #     chunksize=100,
-        #     on_bad_lines='skip'
-        # )
-        #
-        # Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
-        #     delayed(satellite_loader.execute)(i, chunk)
-        #     for i, chunk in enumerate(df_iterator)
-        # )
+        df_iterator = read_csv(
+            self.processed_file,
+            chunksize=100,
+            on_bad_lines='skip'
+        )
+
+        Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
+            delayed(satellite_loader.execute)(i, chunk)
+            for i, chunk in enumerate(df_iterator)
+        )
 
 
 class FlaringGrouperFlow:

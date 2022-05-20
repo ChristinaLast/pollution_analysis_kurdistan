@@ -66,7 +66,7 @@ class SatelliteLoader:
             lat_col=config.LAT_COL,
         )
 
-    def execute(self, flaring_geometries):
+    def execute(self, i, flaring_geometries):
         flaring_geometries["centroid_geometry"] = flaring_geometries.apply(
             lambda row: self.get_point_geometry_from_lat_lon(row), axis=1
         )
@@ -88,7 +88,7 @@ class SatelliteLoader:
         ).execute_for_country(flaring_geometries, save_images=False)
 
         satellite_df.to_csv(
-            f"{self.folder}/{self.model_name}_concentrations.csv",
+            f"{self.folder}/{self.model_name}_concentrations_{i}.csv",
             index=False,  # Skip index column
         )
         return satellite_df
