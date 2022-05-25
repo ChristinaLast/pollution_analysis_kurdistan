@@ -1,7 +1,8 @@
 import os
-from pydantic.dataclasses import dataclass
 from dataclasses import field
 from typing import Sequence
+
+from pydantic.dataclasses import dataclass
 
 
 @dataclass
@@ -16,17 +17,17 @@ class FlaringScraperConfig:
 
 @dataclass
 class FlaringLoaderConfig:
-    TARGET_DIR = "raw_data"
-    START_DATE = "20181012"
-    END_DATE = "202204022"
-    COUNTRY_SHP = "geo_data/kurdistan_adm_2.geojson"
+    TARGET_DIR = "raw_data/2019/July"
+    START_DATE = "20190701"
+    END_DATE = "20190702"
+    COUNTRY_SHP = "geo_data/iraq_kurdistan_dissolved.geojson"
 
 
 @dataclass
 class FlaringDescriptorConfig:
     # PROCESSED_TARGET_DIR = "iraq_processed_data/local_data"
-    PROCESSED_TARGET_DIR = "iraq_processed_data/unique_flaring_locations_timeseries.csv"
-    DESCRIBED_FLARING_DIR = "summarised_data/flare_processed_data"
+    PROCESSED_TARGET_DIR = "processed_data/all_data/raw_data"
+    DESCRIBED_FLARING_DIR = "described_data"
 
 
 @dataclass

@@ -3,9 +3,8 @@ import re
 from pathlib import Path
 
 import geopandas as gpd
-from joblib import Parallel, delayed
-
 from config.model_settings import FlaringLoaderConfig
+from joblib import Parallel, delayed
 from utils.utils import read_csv
 
 
@@ -59,7 +58,9 @@ class FlaringLoader:
             country_flaring_gdf = self._select_flares_within_country(
                 flaring_gdf, dissolved_gdf
             )
-            Path(f"processed_data/all_data/{dirname}").mkdir(parents=True, exist_ok=True)
+            Path(f"processed_data/all_data/{dirname}").mkdir(
+                parents=True, exist_ok=True
+            )
             country_flaring_gdf.to_csv(
                 f"processed_data/all_data/{dirname}/{self._get_dates_from_files(filepath)}.csv"
             )

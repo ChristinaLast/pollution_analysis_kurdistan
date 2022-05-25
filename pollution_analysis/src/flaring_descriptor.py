@@ -3,9 +3,8 @@ import re
 from pathlib import Path
 
 import pandas as pd
-from joblib import Parallel, delayed
-
 from config.model_settings import FlaringDescriptorConfig
+from joblib import Parallel, delayed
 from utils.utils import read_csv, write_csv
 
 
@@ -21,7 +20,7 @@ class FlaringDescriptor:
 
         return cls(
             processed_target_dir=descriptior_config.PROCESSED_TARGET_DIR,
-            described_flaring_dir=descriptior_config.DESCRIBED_FLARING_DIR
+            described_flaring_dir=descriptior_config.DESCRIBED_FLARING_DIR,
         )
 
     def execute(
@@ -60,9 +59,9 @@ class FlaringDescriptor:
 
         try:
             monthly_flaring_df = pd.concat(df_list)
-            Path(f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}").mkdir(
-                parents=True, exist_ok=True
-            )
+            Path(
+                f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}"
+            ).mkdir(parents=True, exist_ok=True)
 
             write_csv(
                 monthly_flaring_df,
@@ -100,5 +99,7 @@ class FlaringDescriptor:
         return str(re.search("([0-9]{4}[0-9]{2})", filepath).group(0))
 
     def _get_year_from_files(self, filepath):
+        print(filepath)
+        print(re.search("([0-9]{4}})", filepath))
         """Filter filenames based on IDs and publication dates"""
         return str(re.search("([0-9]{4}})", filepath).group(0))
