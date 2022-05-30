@@ -73,7 +73,8 @@ class FlaringDescriptor:
             pass
 
     def _calculate_total_flares_per_date(self, filepath):
-        country_flaring_df = read_csv(filepath,  encoding='latin-1')
+        country_flaring_df = read_csv(filepath)
+
         country_flaring_df["Flaring_date"] = pd.to_datetime(
             country_flaring_df["Date_Mscan"]
         ).dt.date
