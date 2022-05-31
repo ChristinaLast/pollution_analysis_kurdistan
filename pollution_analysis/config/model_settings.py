@@ -25,8 +25,8 @@ class FlaringLoaderConfig:
 @dataclass
 class FlaringDescriptorConfig:
     # PROCESSED_TARGET_DIR = "iraq_processed_data/local_data"
-    PROCESSED_TARGET_DIR = "iraq_processed_data/unique_flaring_locations_timeseries.csv"
-    DESCRIBED_FLARING_DIR = "summarised_data/flare_processed_data"
+    DESCRIBED_FLARING_DIR = "grouped_data/"
+    PROCESSED_TARGET_DIR = "processed_data/all_data/raw_data"
 
 
 @dataclass

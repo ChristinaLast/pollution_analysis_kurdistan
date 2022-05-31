@@ -66,7 +66,7 @@ class FlaringDescriptor:
 
             write_csv(
                 monthly_flaring_df,
-                f"{self.described_flaring_dir}/{self._get_year_month_from_files(filepath)}_total_flaring_count.csv",
+                f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}/{self._get_year_month_from_files(filepath)}_total_flaring_count.csv",
             )
             return monthly_flaring_df
         except ValueError:
@@ -74,11 +74,12 @@ class FlaringDescriptor:
 
     def _calculate_total_flares_per_date(self, filepath):
         country_flaring_df = read_csv(filepath)
+
         country_flaring_df["Flaring_date"] = pd.to_datetime(
             country_flaring_df["Date_Mscan"]
         ).dt.date
         flaring_grpby = (
-            country_flaring_df.groupby(["Flaring_date"]).count().reset_index()
+            country_flaring_df.groupby(["Flaring_date"]).count().reset_index().sort_values(by="Flaring_date")
         )
         total_flaring_by_date = flaring_grpby[["Flaring_date", "id"]].rename(
             columns={"id": "Count"}
@@ -90,15 +91,15 @@ class FlaringDescriptor:
             flaring_by_date_df["Flaring_date"]
         ).dt.to_period("M")
         flaring_monthly_grpby = (
-            flaring_by_date_df.groupby(["Flaring_month"]).sum().reset_index()
+            flaring_by_date_df.groupby(["Flaring_month"]).sum().reset_index().sort_values(by="Flaring_month")
         )
         total_flaring_by_month = flaring_monthly_grpby[["Flaring_month", "Count"]]
         return total_flaring_by_month
 
     def _get_year_month_from_files(self, filepath):
         """Filter filenames based on IDs and publication dates"""
-        return str(re.search("([0-9]{4}[0-9]{2})", filepath).group(0))
+        return str(re.findall('\d+', filepath)[1][:6])
 
     def _get_year_from_files(self, filepath):
         """Filter filenames based on IDs and publication dates"""
-        return str(re.search("([0-9]{4}})", filepath).group(0))
+        return str(re.findall('\d+', filepath)[1][:4])
