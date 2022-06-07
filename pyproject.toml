@@ -19,6 +19,7 @@ joblib = "^1.1.0"
 click-config-file = "^0.6.0"
 click-option-group = "^0.5.3"
 isort = "^5.10.1"
+ipyevents = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
