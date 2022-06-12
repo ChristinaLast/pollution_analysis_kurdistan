@@ -1,10 +1,10 @@
 import io
-import pandas as pd
-from joblib import Parallel, delayed
-import requests
 from datetime import date, datetime
 
+import pandas as pd
+import requests
 from config.model_settings import FlaringScraperConfig
+from joblib import Parallel, delayed
 from utils.utils import date_range
 
 

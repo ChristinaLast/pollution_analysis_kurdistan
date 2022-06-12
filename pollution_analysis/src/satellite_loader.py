@@ -1,10 +1,9 @@
 from typing import Sequence
-from shapely.geometry import Point
-
-from open_geo_engine.src.load_ee_data import LoadEEData
 
 # from utils.utils import write_csv
 from config.model_settings import SatelliteLoaderConfig
+from open_geo_engine.src.load_ee_data import LoadEEData
+from shapely.geometry import Point
 
 
 class SatelliteLoader:
