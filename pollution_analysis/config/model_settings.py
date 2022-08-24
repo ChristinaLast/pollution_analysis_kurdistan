@@ -17,22 +17,22 @@ class FlaringScraperConfig:
 
 @dataclass
 class FlaringLoaderConfig:
-    TARGET_DIR = "raw_data/2019/July"
-    START_DATE = "20190701"
-    END_DATE = "20190702"
-    COUNTRY_SHP = "geo_data/iraq_kurdistan_dissolved.geojson"
+    TARGET_DIR = "raw_data/2022/April"
+    START_DATE = "20220423"
+    END_DATE = "20220430"
+    COUNTRY_SHP = "geo_data/kurdistan.geojson"
 
 
 @dataclass
 class FlaringDescriptorConfig:
     # PROCESSED_TARGET_DIR = "iraq_processed_data/local_data"
-    DESCRIBED_FLARING_DIR = "grouped_data/"
-    PROCESSED_TARGET_DIR = "processed_data/all_data/raw_data"
+    DESCRIBED_FLARING_DIR = "grouped_data/kurdistan_data"
+    PROCESSED_TARGET_DIR = "processed_data/kurdistan_data/raw_data"
 
 
 @dataclass
 class FlaringGrouperConfig:
-    PROCESSED_TARGET_DIR: str = "processed_data/all_data/raw_data"
+    PROCESSED_TARGET_DIR: str = "processed_data/kurdistan_data/raw_data"
     FLARING_COLUMNS_TO_KEEP: Sequence[str] = field(
         default_factory=lambda: [
             "id",
@@ -44,7 +44,7 @@ class FlaringGrouperConfig:
             "Cloud_Mask",
         ]
     )
-    NO_OF_DP = 2
+    NO_OF_DP = 4
     # leave empty if no timeseries (only unique locations)
     TIMESERIES_COL = "Date_LTZ"
 

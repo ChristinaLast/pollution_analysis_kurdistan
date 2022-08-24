@@ -5,7 +5,7 @@ from pathlib import Path
 import geopandas as gpd
 from config.model_settings import FlaringLoaderConfig
 from joblib import Parallel, delayed
-from utils.utils import read_csv
+from src.utils.utils import read_csv
 
 
 class FlaringLoader:
@@ -59,7 +59,7 @@ class FlaringLoader:
 
         Parameters
         ----------
-        gdf: GeoJson
+        gdf: GeoJSON
             The filepath to a geometry file that will be sued to select
             flaring locations.
         dirname : string
@@ -102,7 +102,11 @@ class FlaringLoader:
             )
 
     def _unzip_to_df(self, filepath):
-        return read_csv(filepath, error_bad_lines=False)
+        try:
+            csv = read_csv(filepath, error_bad_lines=False)
+        except UnicodeError:
+            print(filepath)
+        return csv
 
     def _read_gdf(self):
         gdf = gpd.read_file(self.country_shp)

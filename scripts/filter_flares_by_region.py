@@ -1,7 +1,7 @@
 import geopandas as gpd
 from shapely.prepared import prep
 
-from pollution_analysis.utils.utils import read_csv, write_csv
+from pollution_analysis.src.utils.utils import read_csv, write_csv
 
 
 def convert_df_to_gdf(df):
@@ -16,13 +16,11 @@ def remove_non_kurdistan_flares(gdf, all_shp):
 if __name__ == "__main__":
     crs = {"init": "epsg:4326"}  # Creating a Geographic data frame
 
-    flaring_df = read_csv(
-        "summarised_data/all_processed_data/all_data_flaring_points.csv"
-    )
+    flaring_df = read_csv("processed_data/all_data/iraq_kurdistan_flaring_points.csv")
     flaring_gdf = convert_df_to_gdf(flaring_df)
     all_shp = gpd.read_file("geo_data/kurdistan.geojson")
     filtered_flares = remove_non_kurdistan_flares(flaring_gdf, all_shp)
     write_csv(
         filtered_flares,
-        "summarised_data/kurdistan_data/kuristan_flaring_points_apr_2022.csv",
+        "processed_data/all_data/kurdistan_flaring_points.csv",
     )

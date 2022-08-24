@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from config.model_settings import FlaringGrouperConfig
 from joblib import Parallel, delayed
-from utils.utils import read_csv, write_csv
+from src.utils.utils import read_csv, write_csv
 
 
 class FlaringGrouper:

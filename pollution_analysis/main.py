@@ -4,7 +4,6 @@ from config.model_settings import (
     FlaringDescriptorConfig,
     FlaringGrouperConfig,
     FlaringLoaderConfig,
-    FlaringScraperConfig,
     SatelliteLoaderConfig,
 )
 from joblib import Parallel, delayed
@@ -12,7 +11,7 @@ from src.flaring_descriptor import FlaringDescriptor
 from src.flaring_grouper import FlaringGrouper
 from src.flaring_loader import FlaringLoader
 from src.satellite_loader import SatelliteLoader
-from utils.utils import read_csv
+from src.utils.utils import read_csv
 
 
 class FlaringLoaderFlow:
@@ -104,7 +103,7 @@ def load_satellite_data(processed_file):
 
 
 @click.group(
-    "flaring-pollution-analyisis",
+    "pollution-analyisis",
     help="Library aiming to analyise the level and impact of flaring in the Kurdistan region of Iraq",
 )
 @click.pass_context
