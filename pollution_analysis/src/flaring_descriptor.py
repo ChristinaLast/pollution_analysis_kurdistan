@@ -1,9 +1,9 @@
 import os
 import re
+from datetime import timedelta
 from pathlib import Path
 
 import pandas as pd
-from datetime import timedelta
 from config.model_settings import FlaringDescriptorConfig
 from joblib import Parallel, delayed
 from src.utils.utils import read_csv, write_csv
@@ -71,14 +71,13 @@ class FlaringDescriptor:
 
         try:
             monthly_flaring_df = pd.concat(df_list)
-
             Path(
                 f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}"
             ).mkdir(parents=True, exist_ok=True)
 
             write_csv(
                 monthly_flaring_df,
-                f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}/ {self._get_year_month_from_files(filepath)}_total_flaring_count.csv",
+                f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}/{self._get_year_month_from_files(filepath)}_total_flaring_count.csv",
             )
             return monthly_flaring_df
         except ValueError:

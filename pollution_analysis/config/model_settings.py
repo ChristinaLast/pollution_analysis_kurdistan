@@ -17,9 +17,10 @@ class FlaringScraperConfig:
 
 @dataclass
 class FlaringLoaderConfig:
-    TARGET_DIR = "raw_data/2022/April"
-    START_DATE = "20220423"
-    END_DATE = "20220430"
+    RAW_DATA_DIR = "raw_data/"
+    TARGET_DIR = "processed_data/"
+    START_DATE = "20220601"
+    END_DATE = "20220826"
     COUNTRY_SHP = "geo_data/kurdistan.geojson"
 
 

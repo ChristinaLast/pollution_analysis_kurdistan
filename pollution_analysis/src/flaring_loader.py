@@ -3,6 +3,7 @@ import re
 from pathlib import Path
 
 import geopandas as gpd
+import pandas as pd
 from config.model_settings import FlaringLoaderConfig
 from joblib import Parallel, delayed
 from src.utils.utils import read_csv
@@ -10,8 +11,14 @@ from src.utils.utils import read_csv
 
 class FlaringLoader:
     def __init__(
-        self, target_dir: str, start_date: str, end_date: str, country_shp: str
+        self,
+        raw_data_dir: str,
+        target_dir: str,
+        start_date: str,
+        end_date: str,
+        country_shp: str,
     ):
+        self.raw_data_dir = raw_data_dir
         self.target_dir = target_dir
         self.start_date = start_date or self._get_dates_from_files()
         self.end_date = end_date or self._get_dates_from_files()
@@ -23,6 +30,7 @@ class FlaringLoader:
     ) -> "FlaringLoader":
 
         return cls(
+            raw_data_dir=loader_config.RAW_DATA_DIR,
             target_dir=loader_config.TARGET_DIR,
             start_date=loader_config.START_DATE,
             end_date=loader_config.END_DATE,
@@ -40,15 +48,16 @@ class FlaringLoader:
         directory to load the flaring data.
 
         """
+        country_name = self._get_file_name()
         country_gdf = self._read_gdf()
         Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
             delayed(self.execute_for_year)(
-                country_gdf, dirname, containing_folder, fileList
+                country_gdf, country_name, dirname, containing_folder, fileList
             )
-            for dirname, containing_folder, fileList in os.walk(self.target_dir)
+            for dirname, containing_folder, fileList in os.walk(self.raw_data_dir)
         )
 
-    def execute_for_year(self, gdf, dirname, containing_folder, fileList):
+    def execute_for_year(self, gdf, country_name, dirname, containing_folder, fileList):
         """
         This executes the `FlaringLoader` pipeline for each year folder
         in the specified directory.
@@ -76,7 +85,6 @@ class FlaringLoader:
         GeoDataFrame
             The flares within the bounds of the original `gdf` geometry.
         """
-
         non_flaring_filetypes = [
             ".DS_Store",
         ]
@@ -85,21 +93,25 @@ class FlaringLoader:
             for filename in fileList
             if not any(filetype in filename for filetype in non_flaring_filetypes)
         ]
-
-        for filepath in flaring_filepaths:
-            dissolved_gdf = gdf.dissolve()
-
-            flaring_df = self._unzip_to_df(filepath)
-            flaring_gdf = self._df_to_gdf(flaring_df)
-            country_flaring_gdf = self._select_flares_within_country(
-                flaring_gdf, dissolved_gdf
-            )
-            Path(f"processed_data/kurdistan_data/{dirname}").mkdir(
-                parents=True, exist_ok=True
-            )
-            country_flaring_gdf.to_csv(
-                f"processed_data/kurdistan_data/{dirname}/{self._get_dates_from_files(filepath)}.csv"
-            )
+        for date in pd.date_range(self.start_date, self.end_date).strftime("%Y%m%d"):
+            filepaths_within_daterange = [
+                filepath for filepath in flaring_filepaths if date in filepath
+            ]
+            for filepath in filepaths_within_daterange:
+                if len(gdf) > 1:
+                    gdf = gdf.dissolve()
+                print(filepath)
+                flaring_df = self._unzip_to_df(filepath)
+                flaring_gdf = self._df_to_gdf(flaring_df)
+                country_flaring_gdf = self._select_flares_within_country(
+                    flaring_gdf, gdf
+                )
+                Path(f"processed_data/{country_name}/").mkdir(
+                    parents=True, exist_ok=True
+                )
+                country_flaring_gdf.to_csv(
+                    f"processed_data/{country_name}_data/{self._get_dates_from_files(filepath)}.csv"
+                )
 
     def _unzip_to_df(self, filepath):
         try:
@@ -133,3 +145,7 @@ class FlaringLoader:
     def _get_dates_from_files(self, filepath):
         """Filter filenames based on IDs and publication dates"""
         return str(re.search("([0-9]{4}[0-9]{2}[0-9]{2})", filepath).group(0))
+
+    def _get_file_name(self):
+        base = os.path.basename(self.country_shp)
+        return os.path.splitext(base)[0]
