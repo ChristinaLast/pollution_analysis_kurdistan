@@ -25,6 +25,10 @@ kaleido = "0.2.1"
 click = "8.0.2"
 google-auth = "^2.11.0"
 pygeos = "^0.12.0"
+setuptools = "^57.4.0"
+google-api-core = "^2.8.2"
+google-cloud = "^0.34.0"
+google-cloud-datastore = "^2.8.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
