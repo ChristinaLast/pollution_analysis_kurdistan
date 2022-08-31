@@ -1,8 +1,10 @@
 import os
-from joblib import Parallel, delayed
+
 import pandas as pd
-from pollution_analysis.src.utils.utils import read_csv, write_csv
+from joblib import Parallel, delayed
+
 from pollution_analysis.config.model_settings import SatelliteLoaderConfig
+from pollution_analysis.src.utils.utils import read_csv, write_csv
 
 
 class AggregateSatelliteData:

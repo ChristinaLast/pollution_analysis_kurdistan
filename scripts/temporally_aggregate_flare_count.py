@@ -1,4 +1,5 @@
 from datetime import datetime
+
 import pandas as pd
 
 from pollution_analysis.src.utils.utils import read_csv, write_csv
@@ -47,7 +48,7 @@ class FlaringAggregator:
         else:
             flaring_by_date_df["Flaring_time_str"] = pd.to_datetime(
                 flaring_by_date_df["Date_LTZ"]
-            ).dt.to_period("D")
+            ).dt.to_period("M")
 
             flaring_grpby = (
                 flaring_by_date_df.groupby(["Flaring_time_str", "Lat", "Lon"])
@@ -78,8 +79,10 @@ class FlaringAggregator:
 
 
 if __name__ == "__main__":
-    flaring_location_in_time_df = read_csv("grouped_data/kurdistan_flares_grouped.csv")
+    flaring_location_in_time_df = read_csv(
+        "processed_data/kurdistan_data/flaring_group_2dp.csv"
+    )
     described_flaring_dir = "processed_data/kurdistan_data"
     FlaringAggregator(
-        flaring_location_in_time_df, described_flaring_dir, "date"
+        flaring_location_in_time_df, described_flaring_dir, "month"
     ).execute()
