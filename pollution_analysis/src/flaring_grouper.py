@@ -1,6 +1,5 @@
 import os
-
-from typing import Dict, Any, List
+from typing import Any, Dict
 import pandas as pd
 from config.model_settings import FlaringGrouperConfig
 from joblib import Parallel, delayed

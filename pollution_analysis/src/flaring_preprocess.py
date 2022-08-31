@@ -1,4 +1,5 @@
 import logging
+
 import pandas as pd
 from src.flaring_filter import FlaringFilter
 

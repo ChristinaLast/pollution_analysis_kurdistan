@@ -62,5 +62,5 @@ class ConvertAODtoPM25:
 if __name__ == "__main__":
     aod_data = "geo_data/aod_data"
     aod_to_pm25_conversion_factor = 128.1298299845
-    aod_col = "VALUE"
+    aod_col = "Optical_Depth_047"
     ConvertAODtoPM25(aod_data, aod_col, aod_to_pm25_conversion_factor).execute()
