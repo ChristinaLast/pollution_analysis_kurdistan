@@ -1,4 +1,5 @@
 import os
+from typing import Dict, Any
 from dataclasses import field
 from typing import Sequence
 
@@ -33,7 +34,7 @@ class FlaringDescriptorConfig:
 
 @dataclass
 class FlaringGrouperConfig:
-    PROCESSED_TARGET_DIR: str = "processed_data/kurdistan_data/raw_data"
+    PROCESSED_TARGET_DIR: str = "processed_data/russia_data/raw_data"
     FLARING_COLUMNS_TO_KEEP: Sequence[str] = field(
         default_factory=lambda: [
             "id",
@@ -43,11 +44,17 @@ class FlaringGrouperConfig:
             "Lon_GMTCO",
             "Date_LTZ",
             "Cloud_Mask",
+            "Temp_BB",
         ]
     )
-    NO_OF_DP = 4
+    NO_OF_DP = 2
     # leave empty if no timeseries (only unique locations)
     TIMESERIES_COL = "Date_LTZ"
+    FILTER_DICT: Dict[str, Any] = field(
+        default_factory=lambda: dict(
+            filter_high_temp=["Temp_BB"],
+        ),
+    )
 
 
 @dataclass
