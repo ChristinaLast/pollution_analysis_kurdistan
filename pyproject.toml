@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pollution_analysis"
+name = "pollution-analysis"
 version = "0.1.0"
 description = ""
 authors = ["ChristinaLast <christina.last@outlook.com>"]
