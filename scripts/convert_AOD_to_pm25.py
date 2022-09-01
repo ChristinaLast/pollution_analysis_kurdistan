@@ -28,11 +28,18 @@ class ConvertAODtoPM25:
     def execute_for_file(self, file):
         logging.info(f"Converting {file} AOD to Pm2.5")
         gdf = read_gdf(f"{self.base_dir}/{file}")
-        converted_gdf = self._convert_aod_values(gdf)
-        converted_gdf.to_file(
+        gdf = self._convert_aod_values(gdf)
+        avg_gdf = self._temporally_average_pm25(gdf)
+        avg_gdf.to_file(
             f"{self.base_dir}/{os.path.splitext(file)[0]}_PM25.geojson",
             driver="GeoJSON",
         )
+
+    def _temporally_average_pm25(self, gdf):
+        gdf["avg_pm25"] = gdf.groupby(["longitude", "latitude"])["pm25"].transform(
+            "mean"
+        )
+        return gdf
 
     def _convert_aod_values(self, gdf):
         gdf[f"{self.aod_col}_norm"] = self._norm_data(gdf)
