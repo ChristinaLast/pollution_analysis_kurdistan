@@ -1,8 +1,9 @@
+import os
 from datetime import timedelta
 from typing import Any
 
-import pandas as pd
 import geopandas as gpd
+import pandas as pd
 
 
 def date_range(start, end):
@@ -46,3 +47,15 @@ def write_csv(df: pd.DataFrame, path: str, **kwargs: Any) -> None:
         escapechar="\r",
         **kwargs,
     )
+
+
+def write_csv_to_geojson(path, lat_col, lon_col, **kwargs: Any) -> None:
+    df = read_csv(path)
+    gdf = gpd.GeoDataFrame(
+        df, geometry=gpd.points_from_xy(df[f"{lon_col}"], df[f"{lat_col}"])
+    )
+    gdf.to_file(f"{os.path.splitext(path)[0]}.geojson", driver="GeoJSON")
+
+
+def read_gdf(path):
+    return gpd.read_file(path, driver="GeoJSON")

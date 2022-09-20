@@ -1,19 +1,17 @@
 import click
-from joblib import Parallel, delayed
 import ee
-
 from config.model_settings import (
-    FlaringScraperConfig,
-    FlaringLoaderConfig,
     FlaringDescriptorConfig,
     FlaringGrouperConfig,
+    FlaringLoaderConfig,
     SatelliteLoaderConfig,
 )
+from joblib import Parallel, delayed
 from src.flaring_descriptor import FlaringDescriptor
-from src.flaring_loader import FlaringLoader
 from src.flaring_grouper import FlaringGrouper
+from src.flaring_loader import FlaringLoader
 from src.satellite_loader import SatelliteLoader
-from utils.utils import read_csv
+from src.utils.utils import read_csv
 
 
 class FlaringLoaderFlow:
@@ -52,11 +50,7 @@ class FlaringSatelliteFetcherFlow:
         )
         ee.Authenticate()
 
-        df_iterator = read_csv(
-            self.processed_file,
-            chunksize=100,
-            on_bad_lines='skip'
-        )
+        df_iterator = read_csv(self.processed_file, chunksize=100, on_bad_lines="skip")
 
         Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
             delayed(satellite_loader.execute)(i, chunk)
@@ -107,8 +101,9 @@ def group_flaring_data(processed_flaring_file):
 def load_satellite_data(processed_file):
     FlaringSatelliteFetcherFlow(processed_file).execute()
 
+
 @click.group(
-    "flaring-pollution-analyisis",
+    "pollution-analyisis",
     help="Library aiming to analyise the level and impact of flaring in the Kurdistan region of Iraq",
 )
 @click.pass_context

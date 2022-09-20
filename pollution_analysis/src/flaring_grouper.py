@@ -1,9 +1,10 @@
 import os
-from joblib import Parallel, delayed
+from typing import Any, Dict
 import pandas as pd
-
-from utils.utils import read_csv, write_csv
 from config.model_settings import FlaringGrouperConfig
+from joblib import Parallel, delayed
+from src.flaring_preprocess import FlaringPreprocess
+from src.utils.utils import read_csv, write_csv
 
 
 class FlaringGrouper:
@@ -13,12 +14,14 @@ class FlaringGrouper:
         processed_target_dir: str,
         no_of_dp: int,
         timeseries_col: str,
+        filter_dict: Dict[str, Any],
     ):
 
         self.flaring_columns_to_keep = flaring_columns_to_keep
         self.processed_target_dir = processed_target_dir
         self.no_of_dp = no_of_dp
         self.timeseries_col = timeseries_col
+        self.filter_dict = filter_dict
 
     @classmethod
     def from_dataclass_config(
@@ -30,6 +33,7 @@ class FlaringGrouper:
             processed_target_dir=grouper_config.PROCESSED_TARGET_DIR,
             no_of_dp=grouper_config.NO_OF_DP,
             timeseries_col=grouper_config.TIMESERIES_COL,
+            filter_dict=grouper_config.FILTER_DICT,
         )
 
     def execute(
@@ -70,9 +74,12 @@ class FlaringGrouper:
         df_list = []
         if flaring_filepaths:
             for filepath in flaring_filepaths:
-                df = self.get_unique_flaring_locations(
-                    read_csv(filepath, usecols=self.flaring_columns_to_keep)
+                filtered_cohorts_df = (
+                    FlaringPreprocess()
+                    .from_options(list(self.filter_dict.keys()))
+                    .execute(read_csv(filepath, usecols=self.flaring_columns_to_keep))
                 )
+                df = self.get_unique_flaring_locations(filtered_cohorts_df)
                 df_list.append(df)
 
             return pd.concat(df_list)
