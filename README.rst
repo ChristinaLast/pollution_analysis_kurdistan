@@ -22,4 +22,4 @@ pollution-analysis
 * PyPI: https://pypi.org/project/pollution-analysis/
 * Free software: MIT license
 
-**Acknowledgment:** This work has been suported by the [Environmnetal Reporting Collective](https://www.investigative.earth/).
+**Acknowledgment:** This work has been suported by the Environmental Reporting Collective (https://www.investigative.earth/).
