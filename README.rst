@@ -4,8 +4,9 @@ pollution-analysis
 
 .. image:: https://img.shields.io/pypi/v/pollution-analysis.svg
         :target: https://pypi.org/project/pollution-analysis/
+        
 .. image:: https://img.shields.io/twitter/follow/giswqs?style=social   	
-        :target: https://twitter.com/giswqs
+        :target: https://twitter.com/last_christina
 
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
         :target: https://opensource.org/licenses/MIT
