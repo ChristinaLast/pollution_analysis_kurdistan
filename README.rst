@@ -14,8 +14,6 @@ pollution-analysis
 .. image:: https://img.shields.io/badge/Donate-Buy%20me%20a%20coffee-yellowgreen.svg
         :target: https://www.buymeacoffee.com/giswqs
 
-.. image:: https://joss.theoj.org/papers/10.21105/joss.02305/status.svg
-        :target: https://joss.theoj.org/papers/10.21105/joss.02305
         
 **A Python package for predicting pollution exposure.**
 
