@@ -119,5 +119,10 @@ venv.bak/
 # vscode
 .vscode/
 
-local_data/*
+grouped_data/*
+raw_data/*
+geo_data/*
+processed_data/*
+summarised_data/*
+notebooks/plots/*
 !local_data/.keep
