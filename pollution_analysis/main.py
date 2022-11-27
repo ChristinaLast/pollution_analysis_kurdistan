@@ -20,7 +20,9 @@ class FlaringLoaderFlow:
 
     def execute(self):
         # Trigger the authentication flow.
-        flaring_loader = FlaringLoader.from_dataclass_config(self.flaring_loader_config)
+        flaring_loader = FlaringLoader.from_dataclass_config(
+            self.flaring_loader_config
+        )
 
         flaring_loader.execute()
 
@@ -50,7 +52,9 @@ class FlaringSatelliteFetcherFlow:
         )
         ee.Authenticate()
 
-        df_iterator = read_csv(self.processed_file, chunksize=100, on_bad_lines="skip")
+        df_iterator = read_csv(
+            self.processed_file, chunksize=100, on_bad_lines="skip"
+        )
 
         Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
             delayed(satellite_loader.execute)(i, chunk)
@@ -78,7 +82,9 @@ def load_flaring_data():
 
 @click.command(
     "flaring_descriptor",
-    help="Describe temporal changes in flaring in a coutry's preprocessed data",
+    help=(
+        "Describe temporal changes in flaring in a coutry's preprocessed data"
+    ),
 )
 def describe_flaring_data():
     FlaringDescriptorFlow().execute()
@@ -95,16 +101,33 @@ def group_flaring_data(processed_flaring_file):
 
 @click.command(
     "load_satellite_data",
-    help="Get the unique flaring locations at a 1km granularity, and download all satellite data given a time period",
+    help=(
+        "Get the unique flaring locations at a 1km granularity, and download"
+        " all satellite data given a time period"
+    ),
 )
 @click.argument("processed_file")
 def load_satellite_data(processed_file):
     FlaringSatelliteFetcherFlow(processed_file).execute()
 
 
+@click.command(
+    "run_pipeline",
+    help="Full pipeline",
+)
+@click.argument("processed_flaring_file")
+def run_pipeline(processed_flaring_file):
+    FlaringLoaderFlow().execute()
+    FlaringDescriptorFlow().execute()
+    FlaringGrouperFlow(processed_flaring_file).execute()
+
+
 @click.group(
     "pollution-analyisis",
-    help="Library aiming to analyise the level and impact of flaring in the Kurdistan region of Iraq",
+    help=(
+        "Library aiming to analyise the level and impact of flaring in the"
+        " Kurdistan region of Iraq"
+    ),
 )
 @click.pass_context
 def cli(ctx):
@@ -115,6 +138,7 @@ cli.add_command(load_flaring_data)
 cli.add_command(describe_flaring_data)
 cli.add_command(group_flaring_data)
 cli.add_command(load_satellite_data)
+cli.add_command(run_pipeline)
 
 if __name__ == "__main__":
     cli()
