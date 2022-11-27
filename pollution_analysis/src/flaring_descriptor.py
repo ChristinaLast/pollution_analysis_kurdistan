@@ -136,10 +136,8 @@ class FlaringDescriptor:
 
     def _get_year_month_from_files(self, filepath):
         """Filter filenames based on IDs and publication dates"""
-        print(re.findall("\d+", filepath))
         return str(re.findall("\d+", filepath)[0][:6])
 
     def _get_year_from_files(self, filepath):
         """Filter filenames based on IDs and publication dates"""
-        print(re.findall("\d+", filepath))
         return str(re.findall("\d+", filepath)[0][:4])
