@@ -1,7 +1,7 @@
 import os
 import re
 from pathlib import Path
-
+import numpy as np
 import geopandas as gpd
 import pandas as pd
 from config.model_settings import FlaringLoaderConfig
@@ -135,13 +135,24 @@ class FlaringLoader:
         return gdf
 
     def _df_to_gdf(self, flaring_df):
-        return gpd.GeoDataFrame(
-            flaring_df,
-            crs=4326,
-            geometry=gpd.points_from_xy(
-                flaring_df.Lon_GMTCO, flaring_df.Lat_GMTCO
-            ),
-        )
+        try:
+            return gpd.GeoDataFrame(
+                flaring_df,
+                crs=4326,
+                geometry=gpd.points_from_xy(
+                    flaring_df.Lon_GMTCO, flaring_df.Lat_GMTCO
+                ),
+            )
+        except ValueError:
+            flaring_df = flaring_df.replace("", np.nan)
+            flaring_df = flaring_df.dropna(subset=["Lon_GMTCO", "Lat_GMTCO"])
+            return gpd.GeoDataFrame(
+                flaring_df,
+                crs=4326,
+                geometry=gpd.points_from_xy(
+                    flaring_df.Lon_GMTCO, flaring_df.Lat_GMTCO
+                ),
+            )
 
     def _get_xy(self, flaring_df):
         flaring_df["x"] = flaring_df.centroid_geometry.map(lambda p: p.x)
