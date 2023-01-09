@@ -10,6 +10,7 @@ from joblib import Parallel, delayed
 from src.flaring_descriptor import FlaringDescriptor
 from src.flaring_grouper import FlaringGrouper
 from src.flaring_loader import FlaringLoader
+
 from src.satellite_loader import SatelliteLoader
 from src.utils.utils import read_csv
 
@@ -137,7 +138,7 @@ def cli(ctx):
 cli.add_command(load_flaring_data)
 cli.add_command(describe_flaring_data)
 cli.add_command(group_flaring_data)
-cli.add_command(load_satellite_data)
+# cli.add_command(load_satellite_data)
 cli.add_command(run_pipeline)
 
 if __name__ == "__main__":
