@@ -1,7 +1,8 @@
 import os
-from joblib import Parallel, delayed
 
 import pandas as pd
+from joblib import Parallel, delayed
+
 from pollution_analysis.utils.utils import read_csv, write_csv
 
 
@@ -65,10 +66,10 @@ if __name__ == "__main__":
         if not any(filetype in filename for filetype in unwanted_filetypes)
     ]
     Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
-            delayed(
-                CalculateTotalPopulationDensity(
-                    no_of_dp, timeseries_col
-                ).calculate_population_density_statistics
-            )(filepath, pop_dens_dir)
-            for filepath in pop_dens_filepaths
-        )
+        delayed(
+            CalculateTotalPopulationDensity(
+                no_of_dp, timeseries_col
+            ).calculate_population_density_statistics
+        )(filepath, pop_dens_dir)
+        for filepath in pop_dens_filepaths
+    )

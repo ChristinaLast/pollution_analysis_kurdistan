@@ -1,12 +1,12 @@
 import os
 import re
+from datetime import timedelta
 from pathlib import Path
 
 import pandas as pd
-from joblib import Parallel, delayed
-
 from config.model_settings import FlaringDescriptorConfig
-from utils.utils import read_csv, write_csv
+from joblib import Parallel, delayed
+from src.utils.utils import read_csv, write_csv
 
 
 class FlaringDescriptor:
@@ -21,7 +21,7 @@ class FlaringDescriptor:
 
         return cls(
             processed_target_dir=descriptior_config.PROCESSED_TARGET_DIR,
-            described_flaring_dir=descriptior_config.DESCRIBED_FLARING_DIR
+            described_flaring_dir=descriptior_config.DESCRIBED_FLARING_DIR,
         )
 
     def execute(
@@ -35,7 +35,18 @@ class FlaringDescriptor:
                 self.processed_target_dir
             )
         )
+
         total_flaring_by_date = pd.concat(total_flaring_by_date_list)
+
+        total_flaring_by_week = self._calculate_total_flares_per_week(
+            total_flaring_by_date
+        )
+
+        write_csv(
+            total_flaring_by_week,
+            f"{self.described_flaring_dir}/weekly_flaring_count.csv",
+        )
+
         monthly_flaring_df = self._calculate_total_flares_per_month(
             total_flaring_by_date
         )
@@ -60,13 +71,14 @@ class FlaringDescriptor:
 
         try:
             monthly_flaring_df = pd.concat(df_list)
-            Path(f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}").mkdir(
-                parents=True, exist_ok=True
-            )
+
+            Path(
+                f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}"
+            ).mkdir(parents=True, exist_ok=True)
 
             write_csv(
                 monthly_flaring_df,
-                f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}/{self._get_year_month_from_files(filepath)}_total_flaring_count.csv",
+                f"{self.described_flaring_dir}/{self._get_year_from_files(filepath)}/ {self._get_year_month_from_files(filepath)}_total_flaring_count.csv",
             )
             return monthly_flaring_df
         except ValueError:
@@ -74,16 +86,19 @@ class FlaringDescriptor:
 
     def _calculate_total_flares_per_date(self, filepath):
         country_flaring_df = read_csv(filepath)
-
         country_flaring_df["Flaring_date"] = pd.to_datetime(
             country_flaring_df["Date_Mscan"]
         ).dt.date
         flaring_grpby = (
-            country_flaring_df.groupby(["Flaring_date"]).count().reset_index().sort_values(by="Flaring_date")
+            country_flaring_df.groupby(["Flaring_date"])
+            .count()
+            .reset_index()
+            .sort_values(by="Flaring_date")
         )
         total_flaring_by_date = flaring_grpby[["Flaring_date", "id"]].rename(
             columns={"id": "Count"}
         )
+
         return total_flaring_by_date
 
     def _calculate_total_flares_per_month(self, flaring_by_date_df):
@@ -91,15 +106,32 @@ class FlaringDescriptor:
             flaring_by_date_df["Flaring_date"]
         ).dt.to_period("M")
         flaring_monthly_grpby = (
-            flaring_by_date_df.groupby(["Flaring_month"]).sum().reset_index().sort_values(by="Flaring_month")
+            flaring_by_date_df.groupby(["Flaring_month"])
+            .sum()
+            .reset_index()
+            .sort_values(by="Flaring_month")
         )
         total_flaring_by_month = flaring_monthly_grpby[["Flaring_month", "Count"]]
         return total_flaring_by_month
 
+    def _calculate_total_flares_per_week(self, flaring_by_date_df):
+        flaring_by_date_df["week_beginning"] = flaring_by_date_df.apply(
+            lambda row: row.Flaring_date - timedelta(days=row.Flaring_date.weekday()),
+            axis=1,
+        )
+
+        flaring_weekly_grpby = (
+            flaring_by_date_df.groupby(["week_beginning"])
+            .sum()
+            .reset_index()
+            .sort_values(by="week_beginning")
+        )
+        return flaring_weekly_grpby
+
     def _get_year_month_from_files(self, filepath):
         """Filter filenames based on IDs and publication dates"""
-        return str(re.findall('\d+', filepath)[1][:6])
+        return str(re.findall("\d+", filepath)[1][:6])
 
     def _get_year_from_files(self, filepath):
         """Filter filenames based on IDs and publication dates"""
-        return str(re.findall('\d+', filepath)[1][:4])
+        return str(re.findall("\d+", filepath)[1][:4])

@@ -1,9 +1,9 @@
 import os
-from joblib import Parallel, delayed
-import pandas as pd
 
-from utils.utils import read_csv, write_csv
+import pandas as pd
 from config.model_settings import FlaringGrouperConfig
+from joblib import Parallel, delayed
+from src.utils.utils import read_csv, write_csv
 
 
 class FlaringGrouper:

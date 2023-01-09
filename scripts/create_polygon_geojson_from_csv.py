@@ -1,8 +1,10 @@
 import os
-from joblib import Parallel, delayed
-import pandas as pd
+
 import geopandas as gpd
-from pollution_analysis.utils.utils import convert_df_to_gdf
+import pandas as pd
+from joblib import Parallel, delayed
+
+from pollution_analysis.src.utils.utils import convert_df_to_gdf
 
 
 class CreatePolygonGeoJSON:
@@ -16,13 +18,15 @@ class CreatePolygonGeoJSON:
         gdf_to_join = convert_df_to_gdf(self.satellite_df, self.x_col, self.y_col)
         gdf = gpd.read_file(geojson_filepath)
         joined_gdf = self._spatial_join(gdf, gdf_to_join)
-        joined_gdf['Date'] = pd.to_datetime(joined_gdf['month_year'])
-        filepath_suffix = geojson_filepath.split('/')[-1][7:]
+        joined_gdf["Date"] = pd.to_datetime(joined_gdf["month_year"])
+        filepath_suffix = geojson_filepath.split("/")[-1][7:]
         print(filepath_suffix)
-        joined_gdf.to_file(f"aod_data/aod_polygons/AOD{filepath_suffix}", driver='GeoJSON')
+        joined_gdf.to_file(
+            f"aod_data/aod_polygons/AOD{filepath_suffix}", driver="GeoJSON"
+        )
 
     def _spatial_join(self, gdf, gdf_to_join):
-        joined_gdf = gpd.sjoin(gdf, gdf_to_join, how='inner')
+        joined_gdf = gpd.sjoin(gdf, gdf_to_join, how="inner")
         return joined_gdf
 
 
@@ -40,6 +44,10 @@ if __name__ == "__main__":
     ]
 
     Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
-            delayed(CreatePolygonGeoJSON(satellite_df, "longitude", "latitude").create_polygon_geojson)(geojson_filepath)
-            for geojson_filepath in geojson_filepaths
-        )
+        delayed(
+            CreatePolygonGeoJSON(
+                satellite_df, "longitude", "latitude"
+            ).create_polygon_geojson
+        )(geojson_filepath)
+        for geojson_filepath in geojson_filepaths
+    )
