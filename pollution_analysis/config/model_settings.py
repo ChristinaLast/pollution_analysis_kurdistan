@@ -19,21 +19,21 @@ class FlaringScraperConfig:
 class FlaringLoaderConfig:
     RAW_DATA_DIR = "raw_data/"
     TARGET_DIR = "processed_data/"
-    START_DATE = "20220601"
-    END_DATE = "20220826"
-    COUNTRY_SHP = "geo_data/kurdistan.geojson"
+    START_DATE = "20220101"
+    END_DATE = "20221126"
+    COUNTRY_SHP = "geo_data/algeria.geojson"
 
 
 @dataclass
 class FlaringDescriptorConfig:
     # PROCESSED_TARGET_DIR = "iraq_processed_data/local_data"
-    DESCRIBED_FLARING_DIR = "grouped_data/kurdistan_data"
-    PROCESSED_TARGET_DIR = "processed_data/kurdistan_data/raw_data"
+    DESCRIBED_FLARING_DIR = "grouped_data/algeria_data"
+    PROCESSED_TARGET_DIR = "processed_data/algeria"
 
 
 @dataclass
 class FlaringGrouperConfig:
-    PROCESSED_TARGET_DIR: str = "processed_data/russia_data/raw_data"
+    PROCESSED_TARGET_DIR: str = "processed_data/algeria/raw_data"
     FLARING_COLUMNS_TO_KEEP: Sequence[str] = field(
         default_factory=lambda: [
             "id",
@@ -58,15 +58,15 @@ class FlaringGrouperConfig:
 
 @dataclass
 class SatelliteLoaderConfig:
-    COUNTRY_CODES = ["IQ"]
+    COUNTRY_CODES = ["DZ"]
     CRS: str = "epsg:4326"
-    YEAR: int = 2019
-    MON_START: int = 7
-    DATE_START: int = 13
+    YEAR: int = 2022
+    MON_START: int = 1
+    DATE_START: int = 1
     YEAR_END: int = 2022
-    MON_END: int = 4
-    DATE_END: int = 8
-    PLACE = "Iraqi Kurdistan, Iraq"
+    MON_END: int = 11
+    DATE_END: int = 26
+    PLACE = "Algeria"
     BASE_FOLDER = "aod_data"
     IMAGE_COLLECTION = "MODIS/006/MCD19A2_GRANULES"
     IMAGE_BAND = [

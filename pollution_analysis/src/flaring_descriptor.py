@@ -30,7 +30,9 @@ class FlaringDescriptor:
         total_flaring_by_date_list = Parallel(
             n_jobs=-1, backend="multiprocessing", verbose=5
         )(
-            delayed(self.execute_for_year)(dirname, containing_folder, fileList)
+            delayed(self.execute_for_year)(
+                dirname, containing_folder, fileList
+            )
             for dirname, containing_folder, fileList in os.walk(
                 self.processed_target_dir
             )
@@ -63,7 +65,9 @@ class FlaringDescriptor:
         flaring_filepaths = [
             os.path.join(dirname, filename)
             for filename in fileList
-            if not any(filetype in filename for filetype in non_flaring_filetypes)
+            if not any(
+                filetype in filename for filetype in non_flaring_filetypes
+            )
         ]
         df_list = []
         for filepath in flaring_filepaths:
@@ -110,12 +114,15 @@ class FlaringDescriptor:
             .reset_index()
             .sort_values(by="Flaring_month")
         )
-        total_flaring_by_month = flaring_monthly_grpby[["Flaring_month", "Count"]]
+        total_flaring_by_month = flaring_monthly_grpby[
+            ["Flaring_month", "Count"]
+        ]
         return total_flaring_by_month
 
     def _calculate_total_flares_per_week(self, flaring_by_date_df):
         flaring_by_date_df["week_beginning"] = flaring_by_date_df.apply(
-            lambda row: row.Flaring_date - timedelta(days=row.Flaring_date.weekday()),
+            lambda row: row.Flaring_date
+            - timedelta(days=row.Flaring_date.weekday()),
             axis=1,
         )
 
@@ -129,8 +136,8 @@ class FlaringDescriptor:
 
     def _get_year_month_from_files(self, filepath):
         """Filter filenames based on IDs and publication dates"""
-        return str(re.findall("\d+", filepath)[1][:6])
+        return str(re.findall("\d+", filepath)[0][:6])
 
     def _get_year_from_files(self, filepath):
         """Filter filenames based on IDs and publication dates"""
-        return str(re.findall("\d+", filepath)[1][:4])
+        return str(re.findall("\d+", filepath)[0][:4])
