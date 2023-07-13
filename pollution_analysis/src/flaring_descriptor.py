@@ -18,7 +18,6 @@ class FlaringDescriptor:
     def from_dataclass_config(
         cls, descriptior_config: FlaringDescriptorConfig
     ) -> "FlaringDescriptor":
-
         return cls(
             processed_target_dir=descriptior_config.PROCESSED_TARGET_DIR,
             described_flaring_dir=descriptior_config.DESCRIBED_FLARING_DIR,
