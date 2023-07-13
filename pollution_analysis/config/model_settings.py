@@ -85,3 +85,13 @@ class FlaringClusterConfig:
         "local_data/grouped_data/texas_20181001_20230710_10dp.csv"
     )
     ALGORITHM: str = "DBscan"
+    HYPERPARAMETER_DICT: Dict[str, Any] = field(
+        default_factory=lambda: dict(
+            eps=[0.01, 0.1, 0.5, 1],
+            min_samples=[
+                5,
+                10,
+                25,
+            ],
+        ),
+    )
