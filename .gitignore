@@ -126,3 +126,5 @@ processed_data/*
 summarised_data/*
 notebooks/plots/*
 !local_data/.keep
+
+.history/*
