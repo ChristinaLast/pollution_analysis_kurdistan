@@ -77,3 +77,11 @@ class SatelliteLoaderConfig:
     MODEL_NAME = "AOD"
     LAT_COL = "y"
     LON_COL = "x"
+
+
+@dataclass
+class FlaringClusterConfig:
+    PATH_TO_DATA: str = (
+        "local_data/grouped_data/texas_20181001_20230710_10dp.csv"
+    )
+    ALGORITHM: str = "DBscan"

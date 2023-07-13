@@ -5,11 +5,13 @@ from config.model_settings import (
     FlaringGrouperConfig,
     FlaringLoaderConfig,
     SatelliteLoaderConfig,
+    FlaringClusterConfig,
 )
 from joblib import Parallel, delayed
 from src.flaring_descriptor import FlaringDescriptor
 from src.flaring_grouper import FlaringGrouper
 from src.flaring_loader import FlaringLoader
+from src.flaring_clusterer import FlaringClusterer
 
 from src.satellite_loader import SatelliteLoader
 from src.utils.utils import read_csv
@@ -76,6 +78,20 @@ class FlaringGrouperFlow:
         flaring_grouper.execute(self.processed_flaring_file)
 
 
+class FlaringClusterFlow:
+    def __init__(
+        self,
+    ):
+        self.flaring_cluster_config = FlaringClusterConfig()
+
+    def execute(self):
+        flaring_cluster = FlaringClusterer.from_dataclass_config(
+            self.flaring_cluster_config,
+        )
+
+        flaring_cluster.execute()
+
+
 @click.command("flaring_loader", help="Load flaring data from local folder")
 def load_flaring_data():
     FlaringLoaderFlow().execute()
@@ -98,6 +114,14 @@ def describe_flaring_data():
 @click.argument("processed_flaring_file")
 def group_flaring_data(processed_flaring_file):
     FlaringGrouperFlow(processed_flaring_file).execute()
+
+
+@click.command(
+    "cluster_flaring_data",
+    help="Cluster raw flaring locations to group as individual flare",
+)
+def cluster_flaring_data():
+    FlaringClusterFlow().execute()
 
 
 @click.command(
@@ -140,6 +164,7 @@ cli.add_command(describe_flaring_data)
 cli.add_command(group_flaring_data)
 # cli.add_command(load_satellite_data)
 cli.add_command(run_pipeline)
+cli.add_command(cluster_flaring_data)
 
 if __name__ == "__main__":
     cli()
