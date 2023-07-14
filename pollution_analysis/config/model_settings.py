@@ -87,11 +87,17 @@ class FlaringClusterConfig:
     ALGORITHM: str = "DBscan"
     HYPERPARAMETER_DICT: Dict[str, Any] = field(
         default_factory=lambda: dict(
-            eps=[0.01, 0.1, 0.5, 1],
+            eps=[
+                0.5,
+                0.75,
+                1,
+                1.25,
+            ],
             min_samples=[
-                5,
-                10,
-                25,
+                20,
+                35,
+                45,
+                60,
             ],
         ),
     )

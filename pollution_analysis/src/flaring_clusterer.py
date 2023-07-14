@@ -57,6 +57,12 @@ class FlaringClusterer:
                         algorithm="ball_tree",
                         metric="haversine",
                     ).fit(np.radians(coords))
+                    preprocessed_df["cluster"] = db.labels_
+                    write_csv(
+                        preprocessed_df,
+                        "local_data/grouped_data/texas_20181001_20230710_{}_{}.csv"
+                        .format(eps, min_samples),
+                    )
 
                     # Here I'm assuming you have an evaluate_model function that
                     # takes the model and data as input and returns a score
@@ -93,9 +99,8 @@ class FlaringClusterer:
                 ),
                 axis=1,
             )
-
             gpd.GeoDataFrame(preprocessed_df, geometry="geometry").to_file(
-                "local_data/grouped_data/texas_20181001_20230710.geojson",
+                "local_data/grouped_data/texas_20181001_20230710_best_model.geojson",
                 driver="GeoJSON",
             )
 

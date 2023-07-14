@@ -18,11 +18,18 @@ def read_csv(path: str, **kwargs: Any) -> pd.DataFrame:
     """
 
     return pd.read_csv(
-        path, sep=",", low_memory=False, encoding="utf-8", na_filter=False, **kwargs
+        path,
+        sep=",",
+        low_memory=False,
+        encoding="utf-8",
+        na_filter=False,
+        **kwargs,
     )
 
 
-def read_csv_to_gdf(path: str, df_crs, geom_col, **kwargs: Any) -> gpd.GeoDataFrame:
+def read_csv_to_gdf(
+    path: str, df_crs, geom_col, **kwargs: Any
+) -> gpd.GeoDataFrame:
     """
     Read csv to a gpd.GeoDataFrame ensuring that nan's are not parsed
     """
@@ -42,7 +49,6 @@ def write_csv(df: pd.DataFrame, path: str, **kwargs: Any) -> None:
         index=False,
         na_rep="",
         sep=",",
-        line_terminator="\n",
         encoding="utf-8",
         escapechar="\r",
         **kwargs,
