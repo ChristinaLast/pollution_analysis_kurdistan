@@ -81,20 +81,21 @@ class SatelliteLoaderConfig:
 
 @dataclass
 class FlaringClusterConfig:
-    PATH_TO_DATA: str = (
-        "local_data/grouped_data/texas_20181001_20230710_10dp.csv"
+    PATH_TO_CLUSTERED_DATA: str = (
+        "texas_20181001_20230710_0_2_20_clustered_regions.geojson"
     )
+    PATH_TO_UNCLUSTERED_DATA: str = "local_data/grouped_data/texas_20181001_20230710_10dp_unclustered.geojson"
     ALGORITHM: str = "DBscan"
     HYPERPARAMETER_DICT: Dict[str, Any] = field(
         default_factory=lambda: dict(
             eps=[
-                0.5,
-                0.75,
-                1,
-                1.25,
+                0.3,
+                # 0.75,
+                # 1,
+                # 1.25,
             ],
             min_samples=[
-                20,
+                10,
                 35,
                 45,
                 60,

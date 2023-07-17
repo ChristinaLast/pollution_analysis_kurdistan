@@ -5,7 +5,7 @@ import geopandas as gpd
 from sklearn.metrics import silhouette_score
 from config.model_settings import FlaringClusterConfig
 import pandas as pd
-from src.utils.utils import read_csv, write_csv
+from src.utils.utils import read_csv, write_csv, read_gdf
 import numpy as np
 
 
@@ -20,7 +20,7 @@ class FlaringClusterer:
         cls, descriptior_config: FlaringClusterConfig
     ) -> "FlaringClusterer":
         return cls(
-            path_to_data=descriptior_config.PATH_TO_DATA,
+            path_to_data=descriptior_config.PATH_TO_UNCLUSTERED_DATA,
             algorithm=descriptior_config.ALGORITHM,
             hyperparameter_dict=descriptior_config.HYPERPARAMETER_DICT,
         )
@@ -28,7 +28,7 @@ class FlaringClusterer:
     def preprocess_data(
         self,
     ):
-        return read_csv(self.path_to_data)
+        return read_gdf(self.path_to_data)
 
     def evaluate_model(self, model, data):
         labels = model.labels_
@@ -60,7 +60,7 @@ class FlaringClusterer:
                     preprocessed_df["cluster"] = db.labels_
                     write_csv(
                         preprocessed_df,
-                        "local_data/grouped_data/texas_20181001_20230710_{}_{}.csv"
+                        "local_data/grouped_data/texas_20181001_20230710_{}_{}_unclustered.csv"
                         .format(eps, min_samples),
                     )
 
@@ -105,11 +105,14 @@ class FlaringClusterer:
             )
 
     def get_centermost_point(self, cluster):
-        centroid = (
-            MultiPoint(cluster).centroid.x,
-            MultiPoint(cluster).centroid.y,
-        )
-        centermost_point = min(
-            cluster, key=lambda point: great_circle(point, centroid).m
-        )
-        return tuple(centermost_point)
+        try:
+            centroid = (
+                MultiPoint(cluster).centroid.x,
+                MultiPoint(cluster).centroid.y,
+            )
+            centermost_point = min(
+                cluster, key=lambda point: great_circle(point, centroid).m
+            )
+            return tuple(centermost_point)
+        except:
+            pass
