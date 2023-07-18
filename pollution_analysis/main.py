@@ -162,7 +162,7 @@ def cli(ctx):
 cli.add_command(load_flaring_data)
 cli.add_command(describe_flaring_data)
 cli.add_command(group_flaring_data)
-# cli.add_command(load_satellite_data)
+cli.add_command(load_satellite_data)
 cli.add_command(run_pipeline)
 cli.add_command(cluster_flaring_data)
 
