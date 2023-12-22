@@ -58,25 +58,25 @@ class FlaringGrouperConfig:
 
 @dataclass
 class SatelliteLoaderConfig:
-    COUNTRY_CODES = ["DZ"]
+    COUNTRY_CODES = ["US"]
     CRS: str = "epsg:4326"
-    YEAR: int = 2022
-    MON_START: int = 1
+    YEAR: int = 2018
+    MON_START: int = 10
     DATE_START: int = 1
-    YEAR_END: int = 2022
-    MON_END: int = 11
-    DATE_END: int = 26
-    PLACE = "Algeria"
-    BASE_FOLDER = "aod_data"
-    IMAGE_COLLECTION = "MODIS/006/MCD19A2_GRANULES"
+    YEAR_END: int = 2023
+    MON_END: int = 7
+    DATE_END: int = 10
+    PLACE = "Texas"
+    BASE_FOLDER = "ch4_data"
+    IMAGE_COLLECTION = "COPERNICUS/S5P/OFFL/L3_CH4"
     IMAGE_BAND = [
-        "Optical_Depth_047",
-        "Optical_Depth_055",
+        "CH4_column_volume_mixing_ratio_dry_air",
+        # "Optical_Depth_055",
     ]
-    IMAGE_FOLDER = "aod_data"
-    MODEL_NAME = "AOD"
-    LAT_COL = "y"
-    LON_COL = "x"
+    IMAGE_FOLDER = "ch4_data"
+    MODEL_NAME = "CH4"
+    LAT_COL = "Lat"
+    LON_COL = "Lon"
 
 
 @dataclass

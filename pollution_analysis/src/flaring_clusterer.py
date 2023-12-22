@@ -1,5 +1,4 @@
 from sklearn.cluster import DBSCAN
-from geopy.distance import great_circle
 from shapely.geometry import MultiPoint, Point
 import geopandas as gpd
 from sklearn.metrics import silhouette_score
@@ -81,24 +80,6 @@ class FlaringClusterer:
             # Use the best model to add the labels to the DataFrame
             preprocessed_df["cluster"] = best_model.labels_
 
-            cluster_labels = best_model.labels_
-            num_clusters = len(set(cluster_labels))
-            clusters = pd.Series(
-                [coords[cluster_labels == n] for n in range(num_clusters)]
-            )
-            print("Number of clusters: {}".format(num_clusters))
-
-            # DBSCAN clustering
-            centermost_points = clusters.map(self.get_centermost_point)
-            lats, lons = zip(*centermost_points)
-            rep_points = pd.DataFrame({"Lon": lons, "Lat": lats})
-            preprocessed_df[["weighted_lon", "weighted_lat"]] = rep_points
-            preprocessed_df["geometry"] = preprocessed_df.apply(
-                lambda x: Point(
-                    (float(x.weighted_lon), float(x.weighted_lat))
-                ),
-                axis=1,
-            )
             gpd.GeoDataFrame(preprocessed_df, geometry="geometry").to_file(
                 "local_data/grouped_data/texas_20181001_20230710_best_model.geojson",
                 driver="GeoJSON",

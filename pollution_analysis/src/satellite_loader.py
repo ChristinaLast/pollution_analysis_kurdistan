@@ -66,7 +66,10 @@ class SatelliteLoader:
         )
 
     def execute(self, i, flaring_geometries):
-        flaring_geometries["centroid_geometry"] = flaring_geometries.apply(
+        if flaring_geometries["centroid_geometry"]:
+            pass
+        else:
+            flaring_geometries["centroid_geometry"] = flaring_geometries.apply(
             lambda row: self.get_point_geometry_from_lat_lon(row), axis=1
         )
 

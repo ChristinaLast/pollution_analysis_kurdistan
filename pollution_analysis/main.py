@@ -45,7 +45,6 @@ class FlaringDescriptorFlow:
 
 class FlaringSatelliteFetcherFlow:
     def __init__(self, processed_file):
-        self.flaring_grouper_config = FlaringGrouperConfig()
         self.satellite_loader_config = SatelliteLoaderConfig()
         self.processed_file = processed_file
 
@@ -54,10 +53,12 @@ class FlaringSatelliteFetcherFlow:
             self.satellite_loader_config,
         )
         ee.Authenticate()
-
-        df_iterator = read_csv(
-            self.processed_file, chunksize=100, on_bad_lines="skip"
-        )
+        if "csv" in self.processed_file:
+            df_iterator = read_csv(
+                self.processed_file, chunksize=100, on_bad_lines="skip"
+            )
+        elif "geojson" in self.processed_file:
+            df_iterator = read_gdf(self.processed_file, rows=100)
 
         Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
             delayed(satellite_loader.execute)(i, chunk)
@@ -150,8 +151,7 @@ def run_pipeline(processed_flaring_file):
 @click.group(
     "pollution-analyisis",
     help=(
-        "Library aiming to analyise the level and impact of flaring in the"
-        " Kurdistan region of Iraq"
+        "Library aiming to analyise the level and impact of flaring"
     ),
 )
 @click.pass_context
@@ -162,7 +162,7 @@ def cli(ctx):
 cli.add_command(load_flaring_data)
 cli.add_command(describe_flaring_data)
 cli.add_command(group_flaring_data)
-# cli.add_command(load_satellite_data)
+cli.add_command(load_satellite_data)
 cli.add_command(run_pipeline)
 cli.add_command(cluster_flaring_data)
 

@@ -63,5 +63,5 @@ def write_csv_to_geojson(path, lat_col, lon_col, **kwargs: Any) -> None:
     gdf.to_file(f"{os.path.splitext(path)[0]}.geojson", driver="GeoJSON")
 
 
-def read_gdf(path):
+def read_gdf(path: str, **kwargs: Any) -> gpd.GeoDataFrame:
     return gpd.read_file(path, driver="GeoJSON")
