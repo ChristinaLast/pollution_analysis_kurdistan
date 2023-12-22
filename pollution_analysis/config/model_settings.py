@@ -58,6 +58,12 @@ class FlaringGrouperConfig:
 
 @dataclass
 class SatelliteLoaderConfig:
+    COUNTRY_BOUNDING_BOXES = {
+        "US": (
+            "United States",
+            (-171.791110603, 18.91619, -66.96466, 71.3577635769),
+        ),
+    }
     COUNTRY_CODES = ["US"]
     CRS: str = "epsg:4326"
     YEAR: int = 2018
@@ -66,8 +72,8 @@ class SatelliteLoaderConfig:
     YEAR_END: int = 2023
     MON_END: int = 7
     DATE_END: int = 10
-    PLACE = "Texas"
-    BASE_FOLDER = "ch4_data"
+    PLACE = "Tezas"
+    BASE_FOLDER = "local_data/grouped_data"
     IMAGE_COLLECTION = "COPERNICUS/S5P/OFFL/L3_CH4"
     IMAGE_BAND = [
         "CH4_column_volume_mixing_ratio_dry_air",

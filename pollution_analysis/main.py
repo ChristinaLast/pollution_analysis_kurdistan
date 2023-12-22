@@ -7,6 +7,7 @@ from config.model_settings import (
     SatelliteLoaderConfig,
     FlaringClusterConfig,
 )
+import pandas as pd
 from joblib import Parallel, delayed
 from src.flaring_descriptor import FlaringDescriptor
 from src.flaring_grouper import FlaringGrouper
@@ -14,7 +15,7 @@ from src.flaring_loader import FlaringLoader
 from src.flaring_clusterer import FlaringClusterer
 
 from src.satellite_loader import SatelliteLoader
-from src.utils.utils import read_csv
+from src.utils.utils import read_csv, write_csv, write_csv_to_geojson, read_gdf
 
 
 class FlaringLoaderFlow:
@@ -59,10 +60,24 @@ class FlaringSatelliteFetcherFlow:
             )
         elif "geojson" in self.processed_file:
             df_iterator = read_gdf(self.processed_file, rows=100)
-
-        Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
-            delayed(satellite_loader.execute)(i, chunk)
-            for i, chunk in enumerate(df_iterator)
+        # df_iterator = read_gdf(
+        #     self.processed_file, rowa=100, on_bad_lines="skip"
+        # )
+        full_satellite_df = pd.concat(
+            Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
+                delayed(satellite_loader.execute)(i, chunk)
+                for i, chunk in enumerate(df_iterator)
+            )
+        )
+        write_csv(
+            full_satellite_df,
+            "local_data/grouped_data/ch4_data/CH4_concentrations_full.csv",
+        )
+        write_csv_to_geojson(
+            full_satellite_df,
+            "longitude",
+            "latitude",
+            "local_data/grouped_data/ch4_data/CH4_concentrations_full.csv",
         )
 
 

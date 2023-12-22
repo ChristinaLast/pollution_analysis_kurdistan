@@ -55,13 +55,40 @@ def write_csv(df: pd.DataFrame, path: str, **kwargs: Any) -> None:
     )
 
 
-def write_csv_to_geojson(path, lat_col, lon_col, **kwargs: Any) -> None:
-    df = read_csv(path)
+def write_csv_to_geojson(df, lat_col, lon_col, path, **kwargs: Any) -> None:
     gdf = gpd.GeoDataFrame(
         df, geometry=gpd.points_from_xy(df[f"{lon_col}"], df[f"{lat_col}"])
     )
     gdf.to_file(f"{os.path.splitext(path)[0]}.geojson", driver="GeoJSON")
 
 
-def read_gdf(path: str, **kwargs: Any) -> gpd.GeoDataFrame:
-    return gpd.read_file(path, driver="GeoJSON")
+def read_gdf(path, **kwargs: Any) -> gpd.GeoDataFrame:
+    return gpd.read_file(
+        path,
+        driver="GeoJSON",
+        **kwargs,
+    )
+
+
+def ee_array_to_df(arr, list_of_bands):
+    """Transforms client-side ee.Image.getRegion array to pandas.DataFrame."""
+    df = pd.DataFrame(arr)
+
+    # Rearrange the header.
+    headers = df.iloc[0]
+    df = pd.DataFrame(df.values[1:], columns=headers)
+
+    # Remove rows without data inside.
+    df = df[["longitude", "latitude", "time", *list_of_bands]].dropna()
+
+    # Convert the data to numeric values.
+    for band in list_of_bands:
+        df[band] = pd.to_numeric(df[band], errors="coerce")
+
+    # Convert the time field into a datetime.
+    df["datetime"] = pd.to_datetime(df["time"], unit="ms")
+
+    # Keep the columns of interest.
+    df = df[["longitude", "latitude", "time", "datetime", *list_of_bands]]
+
+    return df

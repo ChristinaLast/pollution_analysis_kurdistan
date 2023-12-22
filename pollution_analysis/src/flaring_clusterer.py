@@ -80,6 +80,13 @@ class FlaringClusterer:
             # Use the best model to add the labels to the DataFrame
             preprocessed_df["cluster"] = best_model.labels_
 
+            cluster_labels = best_model.labels_
+            num_clusters = len(set(cluster_labels))
+            clusters = pd.Series(
+                [coords[cluster_labels == n] for n in range(num_clusters)]
+            )
+            print("Number of clusters: {}".format(num_clusters))
+
             gpd.GeoDataFrame(preprocessed_df, geometry="geometry").to_file(
                 "local_data/grouped_data/texas_20181001_20230710_best_model.geojson",
                 driver="GeoJSON",
