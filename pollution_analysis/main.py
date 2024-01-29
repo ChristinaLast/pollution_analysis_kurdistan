@@ -107,6 +107,30 @@ class FlaringClusterFlow:
 
         flaring_cluster.execute()
 
+    def get_centroids(self):
+        flaring_cluster = FlaringClusterer.from_dataclass_config(
+            self.flaring_cluster_config,
+        )
+        flares_clustered_df = pd.read_csv(self.flaring_cluster_config.PATH_TO_CLUSTERED_DATA)
+        
+        # Group the DataFrame by 'cluster' and exclude cluster labeled as -1
+        grouped = flares_clustered_df[flares_clustered_df['cluster'] != -1].groupby('cluster')
+
+        # Define a function to extract coordinates from each group
+        def extract_coordinates(group):
+            return [(row['Lon'], row['Lat']) for index, row in group.iterrows()]
+
+        # Apply the function to each cluster and find the centermost point
+        centermost_points = Parallel(n_jobs=-1, backend="multiprocessing", verbose=5)(
+                delayed(flaring_cluster.get_centermost_point)(
+                    extract_coordinates(group)
+                )
+                for name, group in grouped
+            )
+        
+        # Filter out None values if any
+        centermost_points = [point for point in centermost_points if point is not None]
+
 
 @click.command("flaring_loader", help="Load flaring data from local folder")
 def load_flaring_data():

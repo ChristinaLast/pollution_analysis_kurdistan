@@ -76,7 +76,6 @@ class SatelliteLoader:
         )
 
     def execute(self, i, locations_gdf):
-        print("locations_gdf", locations_gdf)
         locations_gdf["centroid_geometry"] = locations_gdf.apply(
             lambda row: self.get_point_geometry_from_lat_lon(row), axis=1
         )

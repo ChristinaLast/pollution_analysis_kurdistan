@@ -1,5 +1,6 @@
 from sklearn.cluster import DBSCAN
 from shapely.geometry import MultiPoint, Point
+from geopy import distance
 import geopandas as gpd
 from sklearn.metrics import silhouette_score
 from config.model_settings import FlaringClusterConfig
@@ -99,7 +100,7 @@ class FlaringClusterer:
                 MultiPoint(cluster).centroid.y,
             )
             centermost_point = min(
-                cluster, key=lambda point: great_circle(point, centroid).m
+                cluster, key=lambda point: distance.great_circle(point, centroid).m
             )
             return tuple(centermost_point)
         except:
